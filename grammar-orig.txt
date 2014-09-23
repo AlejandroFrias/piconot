@@ -1,0 +1,18 @@
+move direction = "N" | "E" | "W" | "S" | "X";
+state = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+arrow = "->";
+surrounding possibility = "x" | "*";
+north surrounding = "N" | surrounding possibility;
+east surrounding = "E" | surrounding possibility;
+west surrounding = "W" | surrounding possibility;
+south surrounding = "S" | surrounding possibility;
+
+surrounding = north surrounding, east surrounding, west surrounding, south surrounding;
+
+space = " ";
+new line = "\n"
+comment = "#", ? all characters ? - "\n", new line;
+
+rule = state, space, surrounding, space, arrow, space, move direction, space, state, (comment | new line);
+
+program = {rule | comment| new line}

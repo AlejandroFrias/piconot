@@ -1,0 +1,10 @@
+Otherwise/If - making it implicitly detect when chained else if's were occurring.
+End - we didn't like enforcing white spaces like in python, but then didn't want 
+      curly braces either, so we emulated Ruby and used "End" to signify a closed If Block.
+Capitalizing - We wanted the sentences to be read more like English, so we force capitalizing
+               of all statements other than section titles that are user defined.
+Commenting - We added commenting more easily into the grammar after having done the grammar_orig.txt
+Go vs Move - We weer interchangeably using "go" vs "move", and decided to stick with "go"
+
+Do - we almost had functions. But realized that do should just be a "go to" in essence. We don't want
+     to build stacks and that functionality would be too far away from our Specific in DSL.
