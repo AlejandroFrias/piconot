@@ -23,13 +23,13 @@ experience how different a language's syntax can be from its semantics.
 In short: get in there and play. Push internal DSLs to the limit! 
 
 ## Checklist
-  - [ ] [Sign up for teams][Teams]. Team 1 will have three people; all other 
+  - [x] [Sign up for teams][Teams]. Team 1 will have three people; all other 
     teams will have two people
-  - [ ] Formally specify the syntax for the original version of Picobot in 
+  - [x] Formally specify the syntax for the original version of Picobot in 
     `grammar-orig.txt`
-  - [ ] Design a new syntax for Picobot 
+  - [x] Design a new syntax for Picobot 
      - [ ] Describe your design in `design.txt`
-     - [ ] Before you implement the syntax, formally specify it in 
+     - [x] Before you implement the syntax, formally specify it in 
        `grammar-ideal.txt`
   - [ ] Implement your new syntax
      - [ ] Add files, as needed, to implement your syntax
