@@ -33,6 +33,8 @@ object EmptyRules extends FriasMarklynAPI {
 
     New Section "Spin";
         Turn right;
+        Go forwards once;
+        Go left once;
         Do Section "Spin";
 
 }
