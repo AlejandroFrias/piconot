@@ -5,47 +5,26 @@ import scala.language.postfixOps
 import java.io.File
 
 import picolib.maze.Maze
-import picolib.semantics.Anything
-import picolib.semantics.Blocked
-import picolib.semantics.East
 import picolib.semantics.GUIDisplay
-import picolib.semantics.North
-import picolib.semantics.Open
 import picolib.semantics.Picobot
-import picolib.semantics.Rule
-import picolib.semantics.South
-import picolib.semantics.State
-import picolib.semantics.StayHere
-import picolib.semantics.Surroundings
 import picolib.semantics.TextDisplay
-import picolib.semantics.West
 import scalafx.application.JFXApp
 
 
 
-object EmptyRules extends FriasMarklynAPI {
+object Empty extends FriasMarklynAPI("empty.txt") {
 
-    Sections("start", "Spin");
+    Sections("start", "fill");
 
     New Section "start";
-        Face down;
-        Do Section "Spin"
+        Face up;
+        Go forwards whilst(open in_front);
+        Go left whilst(open on_left);
+        Do Section "fill";
 
-    New Section "Spin";
-        Turn right;
-        Go forwards once;
-        Go left once;
-        Do Section "Spin";
-
-}
-
-object Empty extends JFXApp{
-
-
-     val emptyMaze = Maze("resources" + File.separator + "empty.txt")
-
-     object EmptyBot extends Picobot(emptyMaze, EmptyRules.rules)
-         with TextDisplay with GUIDisplay
-
-     stage = EmptyBot.mainStage
+    New Section "fill";
+        Go backwards whilst(open behind);
+        Go forwards whilst(open in_front);
+        Go right once_if_possible;
+        Do Section "fill"
 }
