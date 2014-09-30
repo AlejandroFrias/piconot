@@ -78,7 +78,7 @@ class FriasMarklynAPI(val mapFile: String) {
     def toDir(in: Int) = ((in - 1) % 4) + 1
 
 
-    object New {
+    object Start {
         def Section(label: String): Unit = {
             section_number = sections.indexOf(label) + 1
             line_number = 0
@@ -175,7 +175,7 @@ class FriasMarklynAPI(val mapFile: String) {
                                        Surroundings(Anything, opposite(surr.east), Anything, Anything), StayHere,
                                        section_number, line_number + 1, dirFacing)
             }
-            if(surr.south != Anything) {
+            if(surr.south != Anything {
                 someRules :+= makeRule(section_number, line_number, dirFacing,
                                        Surroundings(Anything, Anything, Anything, opposite(surr.south)), StayHere,
                                        section_number, line_number + 1, dirFacing)
@@ -223,6 +223,26 @@ class FriasMarklynAPI(val mapFile: String) {
                     move_dir,
                     State(end_section + "0" + end_line + "0" + end_dir)
                     )
+    }
+
+    def If(conds: Map[Int, RelativeDescription]*): Unit {
+        val m = conds.reduce(_ ++ _).withDefaultValue(Anything)
+        val surrs = List.range(0,4).map( dir =>  // Don't pay too much attention to these numbers -- So much magic
+            Surroundings(m((4 - dir) %4), m((5 - dir) %4), m((7 - dir) %4), m((6 - dir) %4)) )
+        line_number = line_number + 1
+        val newRules = List.range(1,5).flatMap(dirFacing => List(
+            makeRule(section_number, line_number, dirFacing,
+                     surrs(dirFacing - 1), StayHere,
+                     section_number, line_number + 1, dirFacing),
+            makeRule(section_number, line_number, dirFacing,
+                     reverseSurr(surrs(dirFacing - 1)), StayHere,
+                     section_number, line_number + 2, dirFacing))
+        ))
+        rules = rules ++ newRules
+    }
+
+    private def reverseSurr(surr: Surroundings): Surroundings = {
+        Surroundings(opposite(surr.north), opposite(surr.east), opposite(surr.west), opposite(surr.south))
     }
 
     class RunApp(val some_rules: List[Rule], val map: String) extends JFXApp {

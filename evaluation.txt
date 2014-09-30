@@ -8,3 +8,6 @@ Go vs Move - We weer interchangeably using "go" vs "move", and decided to stick 
 
 Do - we almost had functions. But realized that do should just be a "go to" in essence. We don't want
      to build stacks and that functionality would be too far away from our Specific in DSL.
+
+We reverted commenting to be scala style instead of picobot style to save on time in implementation
+

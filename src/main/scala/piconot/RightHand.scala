@@ -2,25 +2,20 @@ package piconot
 
 import scala.language.postfixOps
 
-import java.io.File
-
-import picolib.maze.Maze
-import picolib.semantics.GUIDisplay
-import picolib.semantics.Picobot
-import picolib.semantics.TextDisplay
-import scalafx.application.JFXApp
-
-
-
 object RightHand extends FriasMarklynAPI("maze.txt") {
 
     Sections("Right Hand Rule");
 
-    New Section "Right Hand Rule";
+    Start Section "Right Hand Rule";
         Go forwards whilst(wall on_right, open in_front);
+        If(open on_right);
+            Do Section "Move and turn right"
+        Turn left;
+        Do Section "Right Hand Rule";
+
+    Start Section "Move and turn right";
         Turn right;
-        Go forwards once_if_possible;
-        Turn around;
+        Go forwards once;
         Do Section "Right Hand Rule";
 
 }
