@@ -10,9 +10,9 @@ south surrounding = "S" | surrounding possibility;
 surrounding = north surrounding, east surrounding, west surrounding, south surrounding;
 
 space = " ";
-new line = "\n"
+new line = "\n";
 comment = "#", ? all characters ? - "\n", new line;
 
 rule = state, space, surrounding, space, arrow, space, move direction, space, state, (comment | new line);
 
-program = {rule | comment| new line}
+program = {rule | comment| new line};
