@@ -2,8 +2,7 @@ package piconot
 
 import scala.language.postfixOps
 
-
-object Empty extends FriasMarklynAPI("empty.txt") {
+object Empty extends PicoOught("empty.txt") {
 
     Sections("start", "fill");
 

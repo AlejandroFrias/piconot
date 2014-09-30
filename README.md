@@ -28,16 +28,16 @@ In short: get in there and play. Push internal DSLs to the limit!
   - [x] Formally specify the syntax for the original version of Picobot in 
     `grammar-orig.txt`
   - [x] Design a new syntax for Picobot 
-     - [ ] Describe your design in `design.txt`
+     - [x] Describe your design in `design.txt`
      - [x] Before you implement the syntax, formally specify it in 
        `grammar-ideal.txt`
-  - [ ] Implement your new syntax
-     - [ ] Add files, as needed, to implement your syntax
+  - [x] Implement your new syntax
+     - [x] Add files, as needed, to implement your syntax
      - Include two example programs
-       - [ ] `src/main/scala/piconot/Empty.scala`
-       - [ ] `src/main/scala/piconot/RightHand.scala`
-     - [ ] Describe your implementation process in `evaluation.txt`
-     - [ ] Formally specify your final syntax in `grammar-final.txt`
+       - [x] `src/main/scala/piconot/Empty.scala`
+       - [x] `src/main/scala/piconot/RightHand.scala`
+     - [x] Describe your implementation process in `evaluation.txt`
+     - [x] Formally specify your final syntax in `grammar-final.txt`
 
 ## Warm-up: Formal syntax
 Formally specify the syntax for [Picobot, as it's defined in CS 5][Picobot]. 

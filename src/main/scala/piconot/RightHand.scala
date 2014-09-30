@@ -2,7 +2,7 @@ package piconot
 
 import scala.language.postfixOps
 
-object RightHand extends FriasMarklynAPI("maze.txt") {
+object RightHand extends PicoOught("maze.txt") {
 
     Sections("Right Hand Rule", "Move and turn right");
 
