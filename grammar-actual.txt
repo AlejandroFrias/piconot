@@ -1,36 +1,45 @@
 space = " ", [ space ] (* at least one space *)
 new line = ? end of line character(s) ?
-non-space char = ? all characters ? - space - ":" - "#" - new line
+non-space char = ? all characters ? - space - ";" - new line
 char = non-space char | space
 comment = "//", { char } new line;
 
-end line = (comment | new line), [ end line ] (* at least one end line *)
+end line = ";", (comment | new line), [ end line ] (* at least one end line *)
 
 face direction = "up" | "down" | "left" | "right"
 turn direction = "left" | "right" | "around"
 go direction = "forwards", "backwards", "left", "right"
 
 condition object = "open" | "wall"
-condition direction = "in front" | "behind" | "on left" | "on right"
-condition part = condition object, space, condition direction, {"and", space, condition part}
-go condition = (("until" | "while") , space, condition part) | "once"
 
-label = non-space char { char }
+condition direction = "in_front" | "behind" | "on_left" | "on_right"
+condition part = condition object, space, condition direction, {",", space, condition part}
+go condition = "whilst(" , condition part, ")" | "once"
+
+label = '"', non-space char { char }, '"'
 
 face = "Face", space, face direction
 turn = "Turn", space, turn direction
-go = ("Go", space, go direction, space, go condition) | ("Go all the way", space, go direction)
-do = "Do", space, label
+go = "Go", space, go direction, space, go condition
+do = "Do Section", space, label
 
 command = (face | turn | go | do), end line
 
-if block = "If", space, condition part, end line, { command }
-otherwise = "Otherwise", end line, { command }
-
-if =  if block, { if block }, [otherwise], "End", end line
+if = "If(", condition part, ")", end line
 
 statement = command | if
 
-section = label, ":", end line, { statement }
+section = "Start Section", space, label, end line, { statement }, end line
 
-program = { end line }, { section }
+package = "package piconot", end line
+import = "import scala.language.postfixOps", end line
+sections = "Sections(" , [label , {",", space, label} ] , ")", end line
+
+class name = non-space char, {non-space char}
+file name = non-space char, {non-space char}, ".txt"
+
+open object = "object", space, class name, space, "extends FriasMarklynAPI(", file name, ") {", end line
+close object = "}", end line
+
+
+program = package, import, open object, [sections, { section }], close object
