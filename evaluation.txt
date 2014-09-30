@@ -9,5 +9,7 @@ Go vs Move - We weer interchangeably using "go" vs "move", and decided to stick 
 Do - we almost had functions. But realized that do should just be a "go to" in essence. We don't want
      to build stacks and that functionality would be too far away from our Specific in DSL.
 
-We reverted commenting to be scala style instead of picobot style to save on time in implementation
 
+We went through several iterations of refactoring our code. There was way more ugliness when we started. A lot of hard coded rules and even more ugly var's being used. Some of it was unavoidable. Like using two words to avoid semicolons and dots, like New Section, tricking it by making Section a method of object New. PostfixOperators like this don't work on regular functions. Unfortunately we couldn't avoid some semi-necessary semi-colons.
+
+'while' is a keyword in Scala, so we had to change it to be something else, we chose 'whilst'
