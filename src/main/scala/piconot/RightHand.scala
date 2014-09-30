@@ -4,7 +4,7 @@ import scala.language.postfixOps
 
 object RightHand extends FriasMarklynAPI("maze.txt") {
 
-    Sections("Right Hand Rule");
+    Sections("Right Hand Rule", "Move and turn right");
 
     Start Section "Right Hand Rule";
         Go forwards whilst(wall on_right, open in_front);

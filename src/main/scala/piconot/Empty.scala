@@ -16,6 +16,6 @@ object Empty extends FriasMarklynAPI("empty.txt") {
     Start Section "fill";
         Go backwards whilst(open behind);
         Go forwards whilst(open in_front);
-        Go right once_if_possible;
+        Go right once;
         Do Section "fill";
 }

@@ -5,40 +5,26 @@ import java.io.File
 
 import picolib.maze.Maze
 import picolib.semantics._
-// import picolib.semantics.Anything
-// import picolib.semantics.Blocked
-// import picolib.semantics.East
-// import picolib.semantics.GUIDisplay
-// import picolib.semantics.North
-// import picolib.semantics.Open
-// import picolib.semantics.Picobot
-// import picolib.semantics.Rule
-// import picolib.semantics.South
-// import picolib.semantics.State
-// import picolib.semantics.StayHere
-// import picolib.semantics.Surroundings
-// import picolib.semantics.TextDisplay
-// import picolib.semantics.West
 import scalafx.application.JFXApp
 
-
+/**
+ * 
+ * 
+ */
 class FriasMarklynAPI(val mapFile: String) {
-    var section_number = 0
-    var line_number = 0
-    var rules: List[Rule] = List() //TODO so ugly
+    // The global state:
+    private var section_number = 0                // The section we're currently making rules for
+    private var line_number = 0                   // The line within the section
+    private var rules: List[Rule] = List()        // The rules generated so far
+    private var sections: List[String] = List()   // The list of section names
 
-    var sections: List[String] = List()
-
-    val dirToMoveDirection = Map( 1 -> North, 2 -> East, 3 -> South, 4 -> West )
-    
+    // predeclares the sections to be used
     def Sections(args: String*): Unit = {
         sections = args.toList
     }
 
-    val anySurroundings = Surroundings(Anything, Anything, Anything, Anything)
-
-
-    trait FaceTrait {
+    // Face direction command
+    object Face {
         def up = genFace(1)
         def right = genFace(2)
         def down = genFace(3)
@@ -55,10 +41,10 @@ class FriasMarklynAPI(val mapFile: String) {
         }
     }
 
-    object Face extends FaceTrait
+
 
     trait TurnTrait {
-        def left = genTurn(-1)
+        def left = genTurn(3)
         def right = genTurn(1)
         def around = genTurn(2)
 
@@ -75,7 +61,6 @@ class FriasMarklynAPI(val mapFile: String) {
 
     object Turn extends TurnTrait
 
-    def toDir(in: Int) = ((in - 1) % 4) + 1
 
 
     object Start {
@@ -89,6 +74,7 @@ class FriasMarklynAPI(val mapFile: String) {
         def Section(label: String): Unit = {
             line_number = line_number + 1
             val new_section = sections.indexOf(label) + 1
+            if (new_section == -1) println("It looks like you forgot to predeclare a section. :(")
             val newRules = List.range(1,5).map( dir =>
                 makeRule(section_number, line_number, dir,
                 anySurroundings, StayHere,
@@ -97,7 +83,7 @@ class FriasMarklynAPI(val mapFile: String) {
         }
     }
 
-    val once_if_possible: List[Surroundings] = List()
+    val once: List[Surroundings] = List()
 
     def whilst(conds: Map[Int, RelativeDescription]*): List[Surroundings] = {
         val m = conds.reduce(_ ++ _).withDefaultValue(Anything)
@@ -117,47 +103,17 @@ class FriasMarklynAPI(val mapFile: String) {
         private def makeGo(dirDiff: Int, conds: List[Surroundings]) = {
             line_number = line_number + 1
             conds match {
-                case Nil => rules = rules ++ List.range(1,5).flatMap( dir => 
-                                makeOnceRules(dir, toDir(dir + dirDiff)))
+                case Nil => rules = rules ++ List.range(1,5).map( dir => 
+                                makeRule(section_number, line_number, dir,
+                                         anySurroundings, dirToMoveDirection(toDir(dir + dirDiff)),
+                                         section_number, line_number + 1, dir))
 
                 
                 case any => rules = rules ++ List.range(1,5).flatMap( dir =>
                     rulesFromDirAndSurr(dir, toDir(dir + dirDiff), conds(dir-1)))
             }
         }
-
-        private def makeOnceRules(dirFacing: Int, moveDir: Int) = dirToMoveDirection(moveDir) match {
-            case North => List( makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Open, Anything, Anything, Anything), North,
-                                section_number, line_number + 1, dirFacing ),
-                                makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Blocked, Anything, Anything, Anything), StayHere,
-                                section_number, line_number + 1, dirFacing ))
-
-            case East => List( makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Anything, Open, Anything, Anything), East,
-                                section_number, line_number + 1, dirFacing ),
-                                makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Anything, Blocked, Anything, Anything), StayHere,
-                                section_number, line_number + 1, dirFacing ))
-
-            case South => List( makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Anything, Anything, Anything, Open), South,
-                                section_number, line_number + 1, dirFacing ),
-                                makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Anything, Anything, Anything, Blocked), StayHere,
-                                section_number, line_number + 1, dirFacing ))
-
-            case West => List( makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Anything, Anything, Open, Anything), West,
-                                section_number, line_number + 1, dirFacing ),
-                                makeRule(section_number, line_number, dirFacing,
-                                Surroundings(Anything, Anything, Blocked, Anything), StayHere,
-                                section_number, line_number + 1, dirFacing ))
-            
-        }
-
-                                        
+                               
 
         private def rulesFromDirAndSurr(dirFacing: Int, moveDir: Int, surr: Surroundings): List[Rule] = {
             var someRules: List[Rule] = List(makeRule(section_number, line_number, dirFacing,
@@ -175,7 +131,7 @@ class FriasMarklynAPI(val mapFile: String) {
                                        Surroundings(Anything, opposite(surr.east), Anything, Anything), StayHere,
                                        section_number, line_number + 1, dirFacing)
             }
-            if(surr.south != Anything {
+            if(surr.south != Anything) {
                 someRules :+= makeRule(section_number, line_number, dirFacing,
                                        Surroundings(Anything, Anything, Anything, opposite(surr.south)), StayHere,
                                        section_number, line_number + 1, dirFacing)
@@ -188,15 +144,8 @@ class FriasMarklynAPI(val mapFile: String) {
             someRules
         }
 
-        private def opposite(relDesc: RelativeDescription): RelativeDescription = {
-            if(relDesc == Blocked) {
-                Open
-            } else {
-                Blocked
-            }
-            
-        }
     }
+
 
     object open {
         def in_front = Map(0 -> Open)
@@ -225,7 +174,7 @@ class FriasMarklynAPI(val mapFile: String) {
                     )
     }
 
-    def If(conds: Map[Int, RelativeDescription]*): Unit {
+    def If(conds: Map[Int, RelativeDescription]*): Unit = {
         val m = conds.reduce(_ ++ _).withDefaultValue(Anything)
         val surrs = List.range(0,4).map( dir =>  // Don't pay too much attention to these numbers -- So much magic
             Surroundings(m((4 - dir) %4), m((5 - dir) %4), m((7 - dir) %4), m((6 - dir) %4)) )
@@ -237,22 +186,27 @@ class FriasMarklynAPI(val mapFile: String) {
             makeRule(section_number, line_number, dirFacing,
                      reverseSurr(surrs(dirFacing - 1)), StayHere,
                      section_number, line_number + 2, dirFacing))
-        ))
+        )
         rules = rules ++ newRules
+    }
+
+    private def opposite(relDesc: RelativeDescription): RelativeDescription = relDesc match {
+        case Blocked => Open
+        case Open => Blocked
+        case Anything => Anything
+        
     }
 
     private def reverseSurr(surr: Surroundings): Surroundings = {
         Surroundings(opposite(surr.north), opposite(surr.east), opposite(surr.west), opposite(surr.south))
     }
 
-    class RunApp(val some_rules: List[Rule], val map: String) extends JFXApp {
-        val emptyMaze = Maze("resources" + File.separator + map)
+    private def toDir(in: Int) = ((in - 1) % 4) + 1
 
-         object EmptyBot extends Picobot(emptyMaze, some_rules)
-             with TextDisplay with GUIDisplay
+    private val dirToMoveDirection = Map( 1 -> North, 2 -> East, 3 -> South, 4 -> West )
+    
+    private val anySurroundings = Surroundings(Anything, Anything, Anything, Anything)
 
-         stage = EmptyBot.mainStage
-    }
 
     def main(args: Array[String]): Unit = {
       val app = new RunApp(rules, mapFile)
@@ -261,10 +215,11 @@ class FriasMarklynAPI(val mapFile: String) {
     
 }
 
+class RunApp(val some_rules: List[Rule], val map: String) extends JFXApp {
+    val emptyMaze = Maze("resources" + File.separator + map)
 
+     object EmptyBot extends Picobot(emptyMaze, some_rules)
+         with TextDisplay with GUIDisplay
 
-// Stretch Goals:
-//    # comments instead of //
-//    If statements
-//    spaces
-//    pre-parsing to get rid of "" and {}
+     stage = EmptyBot.mainStage
+}
